@@ -1,5 +1,3 @@
-project( Extensions )
-
 file(GLOB PROJECT_SRC 
 	"*.h"
 	"*.cpp"

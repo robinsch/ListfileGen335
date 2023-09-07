@@ -1,9 +1,9 @@
-#include "Detours/detours.h"
-
 #include <Windows.h>
 #include <string>
 #include <unordered_set>
 #include <fstream>
+
+#include "Detours/detours.h"
 
 static std::unordered_set<std::string> s_files;
 static size_t s_basePathLength = 0;
