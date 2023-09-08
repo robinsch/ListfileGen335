@@ -21,8 +21,6 @@ static char* __cdecl sub_428540_hk(char const* path, int a2)
     return sub_428540_orig(path, a2);
 }
 
-#pragma warning( push )
-#pragma warning( disable : 4244)
 int __stdcall DllMain(HMODULE hModule, DWORD reason, LPVOID)
 {
     if (reason == DLL_PROCESS_ATTACH)
@@ -34,4 +32,3 @@ int __stdcall DllMain(HMODULE hModule, DWORD reason, LPVOID)
 
     return 1;
 }
-#pragma warning( pop )
