@@ -6,15 +6,11 @@
 #include "Detours/detours.h"
 
 static std::unordered_set<std::string> s_files;
-static size_t s_basePathLength = 0;
 static std::ofstream s_listfile = std::ofstream("(listfile)", std::ofstream::out | std::ofstream::trunc);
 
-static char* (__cdecl* sub_433590_orig)(int a1, int a2, char const* fn) = (decltype(sub_433590_orig))0x00433590;
-static char* __cdecl sub_433590_hk(int a1, int a2, char const* fn)
+static char* (__cdecl* sub_428540_orig)(char const* path_, int a2) = (decltype(sub_428540_orig))0x00428540;
+static char* __cdecl sub_428540_hk(char const* path, int a2)
 {
-    std::string path = fn;
-    path.erase(0, s_basePathLength);
-
     auto it = s_files.find(path);
     if (it == s_files.end())
     {
@@ -22,7 +18,7 @@ static char* __cdecl sub_433590_hk(int a1, int a2, char const* fn)
         s_listfile << path << '\n';
     }
 
-    return sub_433590_orig(a1, a2, fn);
+    return sub_428540_orig(path, a2);
 }
 
 #pragma warning( push )
@@ -31,16 +27,8 @@ int __stdcall DllMain(HMODULE hModule, DWORD reason, LPVOID)
 {
     if (reason == DLL_PROCESS_ATTACH)
     {
-        wchar_t buffer[MAX_PATH + 1];
-        GetModuleFileName(NULL, buffer, MAX_PATH + 1);
-
-        std::wstring t(&buffer[0]);
-        std::string clientDir(t.begin(), t.end());
-
-        s_basePathLength = clientDir.substr(0, clientDir.find_last_of("\\")).length() + 1;
-
         DetourTransactionBegin();
-        DetourAttach(&(LPVOID&)sub_433590_orig, sub_433590_hk);
+        DetourAttach(&(LPVOID&)sub_428540_orig, sub_428540_hk);
         DetourTransactionCommit();
     }
 
