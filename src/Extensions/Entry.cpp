@@ -8,17 +8,23 @@
 static std::unordered_set<std::string> s_files;
 static std::ofstream s_listfile = std::ofstream("(listfile)", std::ofstream::out | std::ofstream::trunc);
 
-static char* (__cdecl* sub_428540_orig)(char const* path_, int a2) = (decltype(sub_428540_orig))0x00428540;
-static char* __cdecl sub_428540_hk(char const* path, int a2)
+static int (__stdcall* sub_424B50_orig)(void* handle, char const* path_, int a3, int a4) = (decltype(sub_424B50_orig))0x00424B50;
+static int __stdcall sub_424B50_hk(void* handle, char const* path_, int a3, int a4)
 {
-    auto it = s_files.find(path);
-    if (it == s_files.end())
+    int ret = sub_424B50_orig(handle, path_, a3, a4);
+
+    if (ret)
     {
-        s_files.insert(path);
-        s_listfile << path << '\n';
+        std::string path(path_);
+        auto it = s_files.find(path);
+        if (it == s_files.end())
+        {
+            s_files.insert(path);
+            s_listfile << path << '\n';
+        }
     }
 
-    return sub_428540_orig(path, a2);
+    return ret;
 }
 
 int __stdcall DllMain(HMODULE hModule, DWORD reason, LPVOID)
@@ -26,7 +32,7 @@ int __stdcall DllMain(HMODULE hModule, DWORD reason, LPVOID)
     if (reason == DLL_PROCESS_ATTACH)
     {
         DetourTransactionBegin();
-        DetourAttach(&(LPVOID&)sub_428540_orig, sub_428540_hk);
+        DetourAttach(&(LPVOID&)sub_424B50_orig, sub_424B50_hk);
         DetourTransactionCommit();
     }
 
